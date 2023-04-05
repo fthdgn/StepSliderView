@@ -42,6 +42,13 @@ public class StepSliderView: UIControl {
     }
     
     @IBInspectable
+    public var leftSideTrackColor: UIColor? = nil {
+        didSet {
+            leftSideTrackView.backgroundColor = leftSideTrackColor
+        }
+    }
+    
+    @IBInspectable
     public var trackCircleColor: UIColor? = nil {
         didSet {
             trackCircleViews.forEach { $0.backgroundColor = trackCircleColor ?? tintColor }
@@ -99,6 +106,7 @@ public class StepSliderView: UIControl {
     }
     
     private let trackView: UIView = .init()
+    private let leftSideTrackView: UIView = .init()
     private let knobView: UIView = .init()
     private var trackCircleViews: [UIView] = []
     
@@ -123,6 +131,7 @@ public class StepSliderView: UIControl {
     
     private func initialized() {
         addSubview(trackView)
+        addSubview(leftSideTrackView)
         addSubview(knobView)
         
         addGestureRecognizer(GestureRecognizer(target: self, action: #selector(gestureRecognized(_:))))
@@ -142,6 +151,14 @@ public class StepSliderView: UIControl {
         trackView.center = .init(x: contentInsets.left + (bounds.width - contentInsets.left - contentInsets.right) / 2,
                                  y: contentInsets.top + (bounds.height - contentInsets.top - contentInsets.bottom) / 2)
         trackView.backgroundColor = trackColor ?? tintColor
+        
+        leftSideTrackView.frame = trackView.frame.inset(by: .init(
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: trackView.frame.width * (CGFloat(maximumValue - value) / CGFloat(maximumValue - minimumValue))
+        ))
+        leftSideTrackView.backgroundColor = leftSideTrackColor
         
         let trackCircleCount = (maximumValue - minimumValue) / stepValue + 1
         
